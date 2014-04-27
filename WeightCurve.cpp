@@ -420,7 +420,7 @@ void WeightCurve::updateCurve(const QString &columnName, Curve &curve)
     if (query.lastError().isValid())
         qWarning("Failed to retrieve values : %s\n", query.lastError().text().toUtf8().data());
 
-    for (int i = 0; query.next();)
+    while (query.next())
     {
         float   value;
         QPointF point;
@@ -442,12 +442,11 @@ void WeightCurve::updateCurve(const QString &columnName, Curve &curve)
             if (value > max)
                 max = value;
         }
-        point.setX(i);
+        point.setX(mStartDate.daysTo(date) - 1);
         point.setY(value);
 
         points.push_back(point);
         comments.push_back(query.value(query.record().indexOf("comment")).toString());
-        i++;
     }
 
     curve.setMin(min);
