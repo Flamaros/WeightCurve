@@ -1,5 +1,5 @@
 import QtQuick 2.2
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.2
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
@@ -68,7 +68,14 @@ ApplicationWindow {
 
                 Label {
                     id: date
-                    text: Qt.formatDate(new Date(), "dd/MM/yyyy")
+                    text: Qt.formatDate(application.inputDate, "dd/MM/yyyy") // TODO binder une property c++ qui gere la date pour les inputs
+                    color: dayCalendar.visible ? "red" : linkColor
+                    font.underline: true
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: dayCalendar.visible = !dayCalendar.visible
+                    }
                 }
             }
 
@@ -235,5 +242,16 @@ ApplicationWindow {
             application.noonCurve,
             application.eveningCurve]
         loosingFocusItem: dayComment
+    }
+
+    Calendar {
+        id: dayCalendar
+        anchors.centerIn: parent
+
+        visible: false
+        onSelectedDateChanged: {
+            application.inputDate = selectedDate;
+            // TODO mettre a jour la property dans le code c++
+        }
     }
 }

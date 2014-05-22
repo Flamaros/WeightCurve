@@ -70,6 +70,8 @@ public:
 
     void    initialize();
 
+    Q_PROPERTY(QDate inputDate READ inputDate WRITE setInputDate NOTIFY inputDateChanged)
+
     Q_PROPERTY(float morningWeight READ morningWeight WRITE setMorningWeight NOTIFY morningWeightChanged)
     Q_PROPERTY(float noonWeight READ noonWeight WRITE setNoonWeight NOTIFY noonWeightChanged)
     Q_PROPERTY(float eveningWeight READ eveningWeight WRITE setEveningWeight NOTIFY eveningWeightChanged)
@@ -85,6 +87,9 @@ public:
 
     Q_INVOKABLE bool    importFromCSVFile(const QUrl& sourceFilePath);
     Q_INVOKABLE bool    exportToCSVFile(const QUrl& destinationFilePath);
+
+    void    setInputDate(const QDate& date);
+    QDate   inputDate() const;
 
     void    setMorningWeight(float weight);
     float   morningWeight() const;
@@ -107,6 +112,8 @@ public:
 
 signals:
     void    dateChanged();  /// Called when current day changed
+
+    void    inputDateChanged(const QDate& date);
 
     void    morningWeightChanged(float weight);
     void    noonWeightChanged(float weight);
@@ -132,6 +139,7 @@ private:
     void    updateCurves(); // startDate and enDate must be valid
     void    updateCurve(const QString& columnName, Curve& curve);
 
+    QDate           mInputDate;
     QString         mDBFilePath;
     QSqlDatabase    mDB;
     QTimer          mTimer;

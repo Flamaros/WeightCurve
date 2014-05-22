@@ -40,6 +40,8 @@ void    WeightCurve::initialize()
 
     assert(!mDB.isOpen());
 
+    mInputDate = QDate::currentDate();
+
     backupPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     dir.mkpath(backupPath);
     mDBFilePath = backupPath + "/" + dbFileName;
@@ -144,22 +146,35 @@ bool WeightCurve::exportToCSVFile(const QUrl& destinationFilePath)
     return false;
 }
 
+void WeightCurve::setInputDate(const QDate& date)
+{
+    mInputDate = date;
+    emit inputDateChanged(date);
+    emit morningWeightChanged(morningWeight());
+    emit noonWeightChanged(noonWeight());
+    emit eveningWeightChanged(eveningWeight());
+}
+
+QDate WeightCurve::inputDate() const
+{
+    return mInputDate;
+}
+
 void WeightCurve::setMorningWeight(float weight)
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
 
     query.exec(QString("SELECT date FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         query.exec(QString("UPDATE Weight SET morning='%1' WHERE date='%2'")
-                   .arg(weight).arg(date.toString("dd-MM-yyyy")));
+                   .arg(weight).arg(mInputDate.toString("dd-MM-yyyy")));
     }
     else
     {
         query.exec(QString("INSERT INTO Weight (date, morning) VALUES ('%1', '%2')")
-                   .arg(date.toString("dd-MM-yyyy")).arg(weight));
+                   .arg(mInputDate.toString("dd-MM-yyyy")).arg(weight));
     }
 
     emit morningWeightChanged(weight);
@@ -170,12 +185,11 @@ void WeightCurve::setMorningWeight(float weight)
 float WeightCurve::morningWeight() const
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
     bool        ok;
     float       result = std::numeric_limits<float>::quiet_NaN();
 
     query.exec(QString("SELECT morning FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         float tmp = query.value(query.record().indexOf("morning")).toString().toFloat(&ok);
@@ -188,19 +202,18 @@ float WeightCurve::morningWeight() const
 void WeightCurve::setNoonWeight(float weight)
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
 
     query.exec(QString("SELECT date FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         query.exec(QString("UPDATE Weight SET noon='%1' WHERE date='%2'")
-                   .arg(weight).arg(date.toString("dd-MM-yyyy")));
+                   .arg(weight).arg(mInputDate.toString("dd-MM-yyyy")));
     }
     else
     {
         query.exec(QString("INSERT INTO Weight (date, noon) VALUES ('%1', '%2')")
-                   .arg(date.toString("dd-MM-yyyy")).arg(weight));
+                   .arg(mInputDate.toString("dd-MM-yyyy")).arg(weight));
     }
 
     emit noonWeightChanged(weight);
@@ -211,12 +224,11 @@ void WeightCurve::setNoonWeight(float weight)
 float WeightCurve::noonWeight() const
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
     bool        ok;
     float       result = std::numeric_limits<float>::quiet_NaN();
 
     query.exec(QString("SELECT noon FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         float tmp = query.value(query.record().indexOf("noon")).toString().toFloat(&ok);
@@ -229,19 +241,18 @@ float WeightCurve::noonWeight() const
 void WeightCurve::setEveningWeight(float weight)
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
 
     query.exec(QString("SELECT date FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         query.exec(QString("UPDATE Weight SET evening='%1' WHERE date='%2'")
-                   .arg(weight).arg(date.toString("dd-MM-yyyy")));
+                   .arg(weight).arg(mInputDate.toString("dd-MM-yyyy")));
     }
     else
     {
         query.exec(QString("INSERT INTO Weight (date, evening) VALUES ('%1', '%2')")
-                   .arg(date.toString("dd-MM-yyyy")).arg(weight));
+                   .arg(mInputDate.toString("dd-MM-yyyy")).arg(weight));
     }
 
     emit eveningWeightChanged(weight);
@@ -252,12 +263,11 @@ void WeightCurve::setEveningWeight(float weight)
 float WeightCurve::eveningWeight() const
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
     bool        ok;
     float       result = std::numeric_limits<float>::quiet_NaN();
 
     query.exec(QString("SELECT evening FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         float tmp = query.value(query.record().indexOf("evening")).toString().toFloat(&ok);
@@ -270,7 +280,6 @@ float WeightCurve::eveningWeight() const
 void WeightCurve::setComment(const QString& comment)
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
     QSqlField   commentField("comment", QVariant::String);
     QString     text;
 
@@ -278,16 +287,16 @@ void WeightCurve::setComment(const QString& comment)
     text = mDB.driver()->formatValue(commentField); // Necessary to avoid issue with characters like quotes,...
 
     query.exec(QString("SELECT comment FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         query.exec(QString("UPDATE Weight SET comment=%1 WHERE date='%2'")
-                   .arg(text).arg(date.toString("dd-MM-yyyy")));
+                   .arg(text).arg(mInputDate.toString("dd-MM-yyyy")));
     }
     else
     {
         query.exec(QString("INSERT INTO Weight (date, comment) VALUES ('%1', %2)")
-                   .arg(date.toString("dd-MM-yyyy")).arg(text));
+                   .arg(mInputDate.toString("dd-MM-yyyy")).arg(text));
     }
 
     emit commentChanged(comment);
@@ -297,11 +306,10 @@ void WeightCurve::setComment(const QString& comment)
 QString WeightCurve::comment() const
 {
     QSqlQuery   query;
-    QDate       date = QDate::currentDate();
     QString     result;
 
     query.exec(QString("SELECT comment FROM Weight WHERE date='%1'")
-               .arg(date.toString("dd-MM-yyyy")));
+               .arg(mInputDate.toString("dd-MM-yyyy")));
     if (query.next())
     {
         result = query.value(query.record().indexOf("comment")).toString();
