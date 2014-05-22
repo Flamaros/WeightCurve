@@ -150,9 +150,7 @@ void WeightCurve::setInputDate(const QDate& date)
 {
     mInputDate = date;
     emit inputDateChanged(date);
-    emit morningWeightChanged(morningWeight());
-    emit noonWeightChanged(noonWeight());
-    emit eveningWeightChanged(eveningWeight());
+    emit dateChanged();
 }
 
 QDate WeightCurve::inputDate() const
@@ -373,6 +371,7 @@ void WeightCurve::onDateChanged()
     emit morningWeightChanged(morningWeight());
     emit noonWeightChanged(noonWeight());
     emit eveningWeightChanged(eveningWeight());
+    emit commentChanged(comment());
 }
 
 WeightCurve::WeightCurve()
