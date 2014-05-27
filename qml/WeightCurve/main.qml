@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 
 ApplicationWindow {
+    id: window
     title: qsTr("Weight Curve")
     width: minimumWidth
     height: minimumHeight
@@ -106,6 +107,7 @@ ApplicationWindow {
 
                 Label {
                     id: noonLabel
+                    color: "#462406"
                     text: qsTr("Noon")
                     font.pixelSize: 12
                 }
@@ -244,14 +246,32 @@ ApplicationWindow {
         loosingFocusItem: dayComment
     }
 
-    Calendar {
+    Item {
         id: dayCalendar
-        anchors.centerIn: parent
-
+        anchors.fill: parent
         visible: false
-        onSelectedDateChanged: {
-            application.inputDate = selectedDate;
-            // TODO mettre a jour la property dans le code c++
+
+        Rectangle {
+            anchors.fill: parent
+            opacity: 0.9
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#060606" }
+                GradientStop { position: 1.0; color: "#000000" }
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: dayCalendar.visible = false
+            hoverEnabled: true
+        }
+
+        Calendar {
+            anchors.centerIn: parent
+
+            onSelectedDateChanged: {
+                application.inputDate = selectedDate;
+            }
         }
     }
 }
