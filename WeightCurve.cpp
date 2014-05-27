@@ -11,6 +11,7 @@
 #include <QSqlField>
 #include <QDateTime>
 #include <QVariant>
+#include <QDebug>
 
 #if defined(QT_DEBUG)
     QString  WeightCurve::dbFileName = "weight_debug.db";
@@ -452,8 +453,15 @@ void WeightCurve::updateCurve(const QString &columnName, Curve &curve)
         point.setX(mStartDate.daysTo(date) - 1);
         point.setY(value);
 
-        points.push_back(point);
-        comments.push_back(query.value(query.record().indexOf("comment")).toString());
+        // Find the position for ordered insertion (It's slow but SQLITE failed to sort on dates)
+        int i = 0;
+        for (i = 0; i < points.size(); i++)
+            if (points[i].toPointF().x() >= point.x())
+                break;
+        // --
+
+        points.insert(i, point);
+        comments.insert(i, query.value(query.record().indexOf("comment")).toString());
     }
 
     curve.setMin(min);

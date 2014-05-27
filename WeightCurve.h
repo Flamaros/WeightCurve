@@ -10,7 +10,10 @@
 #include <QColor>
 #include <QAbstractListModel>
 
-class Curve : public QObject    // TODO add comments property (one per day, not linked to points, a QStringList should be fine, with some empty)
+// TODO Save windows settings (size, position,...)
+
+
+class Curve : public QObject
 {
     Q_OBJECT
 
