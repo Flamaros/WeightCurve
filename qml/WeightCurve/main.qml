@@ -269,6 +269,8 @@ ApplicationWindow {
         Calendar {
             anchors.centerIn: parent
 
+            maximumDate: new Date()
+
             onSelectedDateChanged: {
                 application.inputDate = selectedDate;
             }
