@@ -105,3 +105,8 @@ QQmlEngine& QtQuick2ControlsApplicationViewer::qmlEngine()
 {
     return d->engine;
 }
+
+QQuickWindow& QtQuick2ControlsApplicationViewer::window() const
+{
+    return *d->window;
+}

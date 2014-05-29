@@ -386,9 +386,6 @@ WeightCurve::WeightCurve()
 
 WeightCurve::~WeightCurve()
 {
-    mMorningCurve.setColor(QColor("#4F81BD"));
-    mNoonCurve.setColor(QColor("#268E2A"));
-    mEveningCurve.setColor(QColor("#FF9523"));
 }
 
 void WeightCurve::updateCurves()

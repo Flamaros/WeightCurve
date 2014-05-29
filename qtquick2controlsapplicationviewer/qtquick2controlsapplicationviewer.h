@@ -27,6 +27,7 @@ QT_END_NAMESPACE
 
 // Personnal adds
 class QQmlEngine;
+class QQuickWindow;
 
 class QtQuick2ControlsApplicationViewer
 {
@@ -42,6 +43,8 @@ public:
     QQmlEngine& qmlEngine();
 
 protected:
+    QQuickWindow& window() const;
+
     class QtQuick2ApplicationViewerPrivate *d;
 };
 

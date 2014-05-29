@@ -11,10 +11,12 @@ QT += sql
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += \
 	main.cpp \
-	WeightCurve.cpp
+	WeightCurve.cpp \
+	WeightCurveViewer.cpp
 
 HEADERS += \
-	WeightCurve.h
+	WeightCurve.h \
+	WeightCurveViewer.h
 
 
 # Installation path
