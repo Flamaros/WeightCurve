@@ -25,6 +25,8 @@ public:
     Q_PROPERTY(float min READ min WRITE setMin NOTIFY minChanged)
     Q_PROPERTY(float max READ max WRITE setMax NOTIFY maxChanged)
 
+    Curve();
+
     void            setName(const QString& name) {mName = name; emit nameChanged(mName);}
     QString         name() const {return mName;}
 
