@@ -209,8 +209,9 @@ Rectangle {
                     visible: __valid
 
                     property var    pointIndex: index
-                    property var    __x: fixX(modelData.x)
-                    property var    __y: fixY(modelData.y)
+                    property var    __dateIndex: modelData.x
+                    property var    __x: __valid ? fixX(modelData.x) : 0.0
+                    property var    __y: __valid ? fixY(modelData.y) : 0.0
                     property bool   __valid: !isNaN(modelData.y)
 
                     function    fixX(x) {return x * (chartZone.width / (xAxisRepeater.count - 1))}  // x repartition need match the legend not the model
@@ -222,7 +223,13 @@ Rectangle {
                         y1: visible ? pointsRepeater.itemAt(point.pointIndex - 1).__y : 0
                         x2: point.__x
                         y2: point.__y
-                        visible: point.__valid && pointsRepeater.itemAt(point.pointIndex - 1) && pointsRepeater.itemAt(point.pointIndex - 1).__valid // visible only if previous point is valid (defined and not nan)
+                        visible: {
+                            var previousPoint = pointsRepeater.itemAt(point.pointIndex - 1)
+
+                            return point.__valid && previousPoint
+                                    && previousPoint.__valid // visible only if previous point is valid (defined and not nan)
+                                    && previousPoint.__dateIndex + 1 === point.__dateIndex
+                        }
                         color: pointsRepeater.color
                     }
                     Rectangle {

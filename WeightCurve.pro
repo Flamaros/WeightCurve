@@ -8,6 +8,8 @@ QML_IMPORT_PATH =
 
 QT += sql
 
+CONFIG += c++1
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += \
 	main.cpp \
@@ -21,10 +23,6 @@ HEADERS += \
 
 # Installation path
 # target.path =
-
-!win32-msvc2010 {
-QMAKE_CXXFLAGS += -std=gnu++0x
-}
 
 win32 {
 RC_FILE = WeightCurve.rc

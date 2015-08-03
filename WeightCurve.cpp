@@ -2,6 +2,7 @@
 
 #include <assert.h>
 
+#include <QtGlobal>
 #include <QStandardPaths>
 #include <QDir>
 #include <QSqlError>
@@ -25,8 +26,8 @@ WeightCurve* WeightCurve::instance = nullptr;
 //==============================================================================
 
 Curve::Curve()
-    : mMin(std::numeric_limits<float>::quiet_NaN())
-    , mMax(std::numeric_limits<float>::quiet_NaN())
+    : mMin(std::numeric_limits<float>::max())
+    , mMax(std::numeric_limits<float>::lowest())
 {
 }
 
@@ -422,7 +423,7 @@ void WeightCurve::updateCurve(const QString &columnName, Curve &curve)
     QVariantList    points;
     QStringList     comments;
     float           min = std::numeric_limits<float>::max();
-    float           max = std::numeric_limits<float>::min();
+    float           max = std::numeric_limits<float>::lowest();
 
     if (!mStartDate.isValid() || !mEndDate.isValid())
         return;
@@ -450,14 +451,13 @@ void WeightCurve::updateCurve(const QString &columnName, Curve &curve)
             continue;
 
         value = query.value(query.record().indexOf(columnName)).toString().toFloat(&ok);
+
         if (!ok)
             value = std::numeric_limits<float>::quiet_NaN();
         else
         {
-            if (value < min)
-                min = value;
-            if (value > max)
-                max = value;
+            min = std::min(min, value);
+            max = std::max(max, value);
         }
         point.setX(mStartDate.daysTo(date) - 1);
         point.setY(value);
